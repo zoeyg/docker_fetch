@@ -4,7 +4,7 @@ import argparse
 import requests
 import base64
 
-# pulls Docker Images from unauthenticated docker registry api. 
+# pulls Docker Images from docker registry api. 
 # and checks for docker misconfigurations. 
 
 apiversion = "v2"
@@ -21,8 +21,11 @@ parser.add_argument('-n', '--user', dest="user", help="Username for basic authen
 parser.add_argument('-p', '--password', dest="password", help="Password for basic authentication")
 options = parser.parse_args()
 url = options.url
-auth = base64.b64encode(options.user + ":" + options.password)
-headers = { 'Authorization': 'Basic ' + auth}
+
+headers = {}
+if (options.user is not None):
+	auth = base64.b64encode(options.user + ":" + options.password)
+	headers = { 'Authorization': 'Basic ' + auth}
 
 def list_repos():
 	req = requests.get(url+ "/" + apiversion + "/_catalog", verify=False, headers=headers)
